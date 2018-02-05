@@ -1,0 +1,190 @@
+<template>
+  <v-card>
+    <v-card-title>
+      Projects
+      <v-btn>
+        <v-icon>note_add</v-icon>
+        Add
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-text-field
+        append-icon="search"
+        label="Search"
+        single-line
+        hide-details
+        v-model="search"
+      ></v-text-field>
+    </v-card-title>
+    <v-data-table
+      v-bind:headers="headers"
+      :items="projects"
+      :search="search"
+    >
+      <template slot="items" slot-scope="props">
+        <td class="text-xs-center">{{props.item.best_code}}</td>
+        <td class="text-xs-left">{{props.item.territory}}</td>
+        <td>
+          <v-card>
+            <v-card-title  >
+                <span  class="headline mb-0">
+                  {{props.item.best_code}}-{{props.item.name}}: [ {{ props.item.start_date }}->{{ props.item.end_date }} - {{ props.item.duration }} month(s) ]
+                </span>
+            </v-card-title>
+            <v-container>
+              <v-tabs  icons centered >
+                <v-tabs-bar dark color="cyan">
+                  <v-tabs-slider color="yellow"></v-tabs-slider>
+                  <v-tabs-item href="#tab-1">
+                    <v-icon>details</v-icon>
+                    Details
+                  </v-tabs-item>
+                  <v-tabs-item href="#tab-2">
+                    <v-icon>dashboard</v-icon>
+                    Dashbord
+
+                  </v-tabs-item>
+                  <v-tabs-item href="#tab-3">
+                    <v-icon>history</v-icon>
+                    Historic
+                  </v-tabs-item>
+                </v-tabs-bar>
+                <v-tabs-items>
+                  <v-tabs-content :id="'tab-1'">
+                    <v-card>
+                      <v-card-text>
+                        <table class="project-details">
+                          <tr  style="height: 10px">
+                            <td class="project-details">Start Date:</td>
+                            <td>{{ props.item.start_date }}</td>
+                          </tr>
+                          <tr>
+                            <td class="project-details">End Date:</td>
+                            <td>{{ props.item.end_date }}</td>
+                          </tr>
+                          <tr>
+                            <td class="project-details">Duration:</td>
+                            <td>{{ props.item.duration }} month(s)</td>
+                          </tr>
+                          <tr>
+                            <td class="project-details">Total Budget:</td>
+                            <td>{{ props.item.total_budget }}</td>
+                          </tr>
+                        </table>
+                        <textarea name="textarea" rows="10" cols="80%" disabled>
+                            {{ props.item.description }}
+                        </textarea>
+                      </v-card-text>
+                    </v-card>
+                  </v-tabs-content>
+                  <v-tabs-content :id="'tab-2'">
+                    <v-card flat>
+                        <v-data-table
+                          v-bind:headers="headersOuputs"
+                          :items="props.item.outputs"
+                          hide-actions
+                          hide-headers
+                        >
+                          <template slot="items" slot-scope="output">
+                            <td>
+                              <h3>{{ output.item.name }}</h3>
+                              <!--<Activities :activities="output.item.activities" :duration="props.item.duration"></Activities>-->
+                            </td>
+                          </template>
+                        </v-data-table>
+                    </v-card>
+                  </v-tabs-content>
+                  <v-tabs-content :id="'tab-3'">
+                    <v-card flat>
+                      <v-card-text>
+                        Historic
+                      </v-card-text>
+                    </v-card>
+                  </v-tabs-content>
+                </v-tabs-items>
+              </v-tabs>
+            </v-container>
+            <v-card-actions>
+              <v-btn flat color="orange">Edit</v-btn>
+              <v-btn flat color="orange">Delete</v-btn>
+            </v-card-actions>
+          </v-card>
+        </td>
+      </template>
+      <template slot="no-data">
+        <v-alert :value="true" color="error" icon="warning">
+          Sorry, nothing to display here :(
+         </v-alert>
+      </template>
+    </v-data-table>
+  </v-card>
+</template>
+
+<script>
+  /* eslint-disable no-multiple-empty-lines,key-spacing */
+
+  import ProjectItem from './ProjectItem'
+  import Activities from './activities/Activities'
+
+  export default {
+    name: 'projects-list',
+    props: {
+      projects: {
+        type: Object,
+        required: true
+      }
+    },
+    components:{
+      ProjectItem,
+      Activities
+    },
+    methods: {
+      convertStringtoArray (strReport) {
+        console.log('strReport' + strReport)
+        var vm = this
+        var str = strReport
+        vm.report = str.split(',')
+        console.log(vm.report)
+      }
+    },
+    data () {
+      return {
+        search: '',
+        headers:[
+          {
+            text: 'Project Code',
+            align: 'left',
+            value: 'best_code',
+            width: '3%'
+          },
+          {
+            text: 'Location',
+            align: 'left',
+            value: 'location',
+            width: '7%'
+          },
+          {
+            text: 'Project Name',
+            align: 'left',
+            value: 'name',
+            width: '90%'
+          }
+        ],
+        headersOuputs: [
+          {
+            text: 'Output Name',
+            align: 'left',
+            value: 'outputs',
+          }
+        ]
+
+      }
+    }
+  }
+
+</script>
+<style scoped>
+  td.project-details{
+    height: 4px;
+    font-weight: bold;
+  }
+</style>
